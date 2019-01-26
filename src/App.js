@@ -12,7 +12,8 @@ class App extends Component {
 
     this.state = {
       vehiclesToDisplay: [],
-      buyersToDisplay: []
+      buyersToDisplay: [],
+      vehicleApi: 'https://joes-autos.herokuapp.com/api'
     };
 
     this.getVehicles = this.getVehicles.bind(this);
@@ -30,16 +31,38 @@ class App extends Component {
 
   getVehicles() {
     // axios (GET)
-    // setState with response -> vehiclesToDisplay
-  }
+      axios.get(`${this.state.vehicleApi}/vehicles`)
+      .then(res => {
+        toast.success("Successfully got Vehicles.");
+        // setState with response -> vehiclesToDisplay
+        this.setState({vehiclesToDisplay: res.data});
+      }).catch((res) => {
+        toast.error("Failed at fetching Vehicles");
+      })   
+}
 
   getPotentialBuyers() {
     // axios (GET)
-    // setState with response -> buyersToDisplay
+    axios.get(`${this.state.vehicleApi}/buyers`)
+    .then( res => {
+      toast.success('Sucessfully Returned Buyers');
+      // setState with response -> buyersToDisplay
+      this.setState({buyersToDisplay: res.data});
+    }).catch( res => {
+      toast.error('Failed to Get Buyer');
+    })
+    
   }
 
   sellCar(id) {
     // axios (DELETE)
+    axios.delete(`${this.state.vehicleApi}/vehicles/${id}`)
+    .then( res => {
+      toast.success('Sucessfully Sold the Vehicle');
+      this.setState({vehiclesToDisplay: res.data.vehicles});
+    }).catch(res => {
+      toast.error('Failed at Selling the Vehicle');
+    })
     // setState with response -> vehiclesToDisplay
   }
 
@@ -59,7 +82,15 @@ class App extends Component {
 
   updatePrice(priceChange, id) {
     // axios (PUT)
-    // setState with response -> vehiclesToDisplay
+    axios.put(`${this.state.vehicleApi}/vehicles/${id}/${priceChange}`)
+    .then(res => {
+      toast.success("Sucessfully Changed Vehicles Price");
+      // setState with response -> vehiclesToDisplay
+      this.setState({vehiclesToDisplay: res.data.vehicles});
+    }).catch( (res) => {
+      toast.error("Failed at Changing Vehicles Price");
+    })
+    
   }
 
   addCar() {
@@ -72,7 +103,15 @@ class App extends Component {
     };
 
     // axios (POST)
-    // setState with response -> vehiclesToDisplay
+    axios.post(`${this.state.vehicleApi}/vehicles`, newCar)
+    .then( res => {
+      toast.success('Sucessfully Created A new Vehicle');
+      // setState with response -> vehiclesToDisplay
+      this.setState({vehiclesToDisplay: res.data.vehicles});
+    }).catch( res => {
+      toast.error('Failed at creating a new vehicle');
+    })
+    
   }
 
   addBuyer() {
@@ -83,12 +122,26 @@ class App extends Component {
     };
 
     //axios (POST)
-    // setState with response -> buyersToDisplay
+    axios.post(`${this.state.vehicleApi}/buyers`,newBuyer)
+    .then( res => {
+      toast.success('Sucessfully Added new buyer');
+      this.setState({buyersToDisplay: res.data.buyers});
+    }).catch( res => {
+      toast.error('Failed at adding a new Buyer');
+    })
+    
   }
 
   deleteBuyer(id) {
     // axios (DELETE)
-    //setState with response -> buyersToDisplay
+    axios.delete(`${this.state.vehicleApi}/buyers/${id}`)
+    .then( res => {
+      toast.success('Sucessfully Removed Buyer');
+      //setState with response -> buyersToDisplay
+      this.setState({buyersToDisplay: res.data.buyers});
+    }).catch( res => {
+      toast.error('Failed to Remove Buyer');
+    })
   }
 
   nameSearch() {
